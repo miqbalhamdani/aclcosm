@@ -27,5 +27,5 @@ jobs:
             cd ${{ vars.DEPLOY_PATH }}
             git pull origin master
             composer install
-            npm install
-            npm run production
+            # npm install
+            # npm run production

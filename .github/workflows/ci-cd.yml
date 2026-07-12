@@ -1,0 +1,31 @@
+name: Deploy
+
+# Required GitHub secrets (Settings → Secrets and variables → Actions):
+#   SSH_HOST     - server hostname or IP
+#   SSH_USERNAME - SSH user
+#   SSH_KEY      - private SSH key with access to the server
+#   SSH_PORT     - SSH port (use 22 if unsure)
+#   DEPLOY_PATH  - absolute path of the app on the server (repo already cloned, .env configured)
+
+on:
+  push:
+    branches: [master]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ vars.SSH_HOST }}
+          username: ${{ vars.SSH_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          port: ${{ vars.SSH_PORT }}
+          script: |
+            set -e
+            cd ${{ vars.DEPLOY_PATH }}
+            git pull origin master
+            composer install --no-dev --prefer-dist --no-interaction
+            npm install
+            npm run production
